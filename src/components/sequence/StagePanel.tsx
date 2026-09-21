@@ -54,6 +54,19 @@ export function StagePanel({
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
+  // The panel's state at the top of the page, written into the server HTML.
+  // Without it every panel was fully visible until the scripts loaded and ran
+  // the effect below, so on a cold load the three panels' copy sat stacked on
+  // top of each other for a few seconds. Computed at progress 0 rather than
+  // from progress.get() so server and client render the same markup; if the
+  // page is reloaded mid-scroll, the effect corrects it on its first run.
+  const initialOpacity = ramp(0, fade.stops, fade.values);
+  const initialStyle = {
+    opacity: initialOpacity,
+    transform: `translate3d(0, ${ramp(0, lift.stops, lift.values)}px, 0)`,
+    visibility: initialOpacity < 0.02 ? 'hidden' : 'visible',
+  } as const;
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -72,7 +85,7 @@ export function StagePanel({
   }, [progress, fade, lift]);
 
   return (
-    <Tag ref={ref as never} className={className} {...rest}>
+    <Tag ref={ref as never} className={className} style={initialStyle} {...rest}>
       {children}
     </Tag>
   );
