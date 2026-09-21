@@ -66,8 +66,8 @@ export function MascotStage({ children }: Props) {
      * source frames were composed to leave on the left.
      *
      * Portrait: right-anchoring would crop to a blown-up shoulder, so instead
-     * the frame is scaled to roughly the top half and centred on the mascot
-     * (~74% across the source), leaving the lower screen for the copy.
+     * the frame is scaled to roughly the top half and positioned 74% across,
+     * matching the poster's CSS, leaving the lower screen for the copy.
      */
     const MASCOT_FOCUS_X = 0.74;
 
@@ -86,8 +86,12 @@ export function MascotStage({ children }: Props) {
         const scale = Math.max(cw / fw, (ch * 0.52) / fh);
         dw = fw * scale;
         dh = fh * scale;
-        // Centre the mascot horizontally, then clamp so no edge pulls inside.
-        dx = Math.min(0, Math.max(cw - dw, cw / 2 - dw * MASCOT_FOCUS_X));
+        // Exactly what the poster's `object-position: 74% top` does, so the
+        // first drawn frame lands where the poster already put the mascot.
+        // This used to centre the mascot's 74% point on screen instead, which
+        // framed it differently: on phones the robot visibly slid left as the
+        // canvas faded in over the poster.
+        dx = (cw - dw) * MASCOT_FOCUS_X;
         dy = 0;
       } else {
         const scale = Math.max(cw / fw, ch / fh);
