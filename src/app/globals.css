@@ -1,26 +1,342 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Short viewports: landscape phones, and any window squashed vertically. The
+   built-in `landscape:` variant only asks about orientation, which is why a
+   844x390 phone was being handed the full-height hero layout. */
+@custom-variant short (@media (max-height: 560px));
+
+@theme {
+  /* Surfaces - a dark stack so the gold logo reads as the only light source. */
+  --color-night: #08090c;
+  --color-surface: #101217;
+  --color-surface-2: #171a21;
+
+  /* Gold: the single accent. Never used as a text colour at body size. */
+  --color-gold: #d4af37;
+  --color-gold-bright: #fbe38a;
+  --color-gold-deep: #8a5f16;
+
+  /* Warm highlight borrowed from the mascot's body tone. */
+  --color-cream: #f3eada;
+
+  --color-ink: #f5f3ef;
+  --color-muted: #9aa0aa;
+
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    /* Lenis drives scrolling; native smooth behaviour would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+    /* Declared on the document, not just the control: native popups such as
+       the <select> option list are painted by the OS against the page's
+       colour scheme, so setting it per-element left them white. */
+    color-scheme: dark;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-night);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    /* The mascot sequence is wide; never let it open a horizontal scrollbar. */
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-gold) 30%, transparent);
+    color: var(--color-ink);
+  }
+
+  /* One focus treatment everywhere, so keyboard users are never lost on a dark page. */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Native controls default to a light palette, which reads as a bright white
+     box on this page. `color-scheme` recolours them without replacing them, so
+     the built-in keyboard and screen-reader behaviour is preserved. */
+  /* Belt and braces for the option list: some platforms ignore color-scheme
+     for popups, so the colours are stated outright as well. */
+  select option {
+    background-color: var(--color-surface-2);
+    color: var(--color-ink);
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-gold);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility gold-text {
+  background-image: linear-gradient(
+    135deg,
+    var(--color-gold-deep) 0%,
+    #f3d27a 45%,
+    #c9911f 70%,
+    var(--color-gold-bright) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Justified body prose.
+   Applied to the wide prose columns only. Justification distributes the slack
+   in a line across its spaces, so it needs enough words per line to hide that
+   slack; in a narrow card it stretches four words across the full measure and
+   looks broken. Card text is therefore left ragged-right by omitting this
+   class, rather than by trying to detect column width in CSS. */
+@utility body-copy {
+  text-align: justify;
+  text-justify: inter-word;
+  /* Hyphenation lets the browser break a long word instead of stretching the
+     line around it, which is what keeps rivers of white space from opening up.
+     The limits require a 6-character word and leave at least 3 before and 2
+     after the break, so no single letter is stranded. */
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphenate-limit-chars: 6 3 2;
+  /* `text-wrap: pretty` is set globally on p and fights justification. */
+  text-wrap: wrap;
+}
+
+/* On a phone even the wide columns are only a few words across, so they fall
+   back to ragged-right too. */
+@media (max-width: 30rem) {
+  .body-copy {
+    text-align: left;
+  }
+}
+
+/* The brand CTA. Defined once: it was previously hand-copied into four
+   components, which meant a style change needed four edits and they drifted. */
+@utility btn-gold {
+  background-image: linear-gradient(
+    to bottom right,
+    var(--color-gold-bright),
+    var(--color-gold),
+    #c9911f
+  );
+  color: #1a1305;
+  position: relative;
+  overflow: hidden;
+  /* Keeps the sheen's negative z-index above the gradient, below the label. */
+  isolation: isolate;
+  box-shadow: 0 10px 30px -10px color-mix(in oklab, var(--color-gold) 50%, transparent);
+  transition:
+    box-shadow 0.3s var(--ease-out-expo),
+    filter 0.3s var(--ease-out-expo),
+    transform 0.3s var(--ease-out-expo);
+
+  /* A light sweep that crosses the button every few seconds, and at once on
+     hover, so the primary action catches the eye without shouting. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: linear-gradient(
+      110deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 65%
+    );
+    transform: translateX(-120%);
+    animation: btnSheen 5s var(--ease-out-expo) infinite;
+    pointer-events: none;
+  }
+
+  &:hover {
+    box-shadow: 0 16px 40px -12px color-mix(in oklab, var(--color-gold) 60%, transparent);
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+  }
+
+  &:hover::after {
+    animation: btnSheenOnce 0.8s ease-out 1;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  & svg {
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+
+  &:hover svg {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes btnSheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  30%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@utility gold-rule {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-gold) 45%, transparent),
+    transparent
+  );
+}
+
+/* The repeated surface treatment: faint glass that warms on hover. */
+@utility glass {
+  background-color: color-mix(in oklab, white 3%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-gold) 15%, transparent);
+  backdrop-filter: blur(8px);
+  transition:
+    border-color 0.4s var(--ease-out-expo),
+    box-shadow 0.4s var(--ease-out-expo),
+    transform 0.4s var(--ease-out-expo);
+}
+
+@utility glass-hover {
+  &:hover {
+    border-color: color-mix(in oklab, var(--color-gold) 45%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-gold) 10%, transparent),
+      0 18px 50px -20px color-mix(in oklab, var(--color-gold) 35%, transparent);
+    transform: translateY(-3px);
+  }
+}
+
+/* Slow drift on the hero's light pool, so the scene is not perfectly static
+   before the visitor scrolls. */
+@keyframes emberDrift {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate3d(-1.5%, 1.5%, 0) scale(1.06);
+  }
+}
+
+@keyframes scrollCue {
+  0% {
+    transform: translateY(-40%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(140%);
+    opacity: 0;
+  }
+}
+
+/* A signal travelling along the footer's top edge. Slow and single-pass so it
+   reads as a status line, not a loading bar. */
+@keyframes signalSweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(400%);
+    opacity: 0;
+  }
+}
+
+/* Gold dust: a slow rise with a lateral drift, fading in and out at the ends
+   so particles never visibly pop into or out of existence. */
+@keyframes sprinkleFloat {
+  0% {
+    transform: translate3d(0, 12px, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--s-op);
+  }
+  50% {
+    transform: translate3d(var(--s-sway), -16px, 0);
+  }
+  85% {
+    opacity: var(--s-op);
+  }
+  100% {
+    transform: translate3d(0, -44px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* WhatsApp attention ring - expands and fades, never loops fast enough to nag. */
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70%,
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes btnSheenOnce {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120%);
+  }
 }
