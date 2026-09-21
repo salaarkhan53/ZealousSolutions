@@ -43,6 +43,16 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: /ZealousSolutions
           NEXT_PUBLIC_PREVIEW: 'true'
 
+      # Refuse to deploy a build whose asset URLs lack the base path: every
+      # script and stylesheet would 404 and the preview would render unstyled.
+      # Failing here leaves the last good deployment live.
+      - name: Check base path was applied
+        run: |
+          if ! grep -q '/ZealousSolutions/_next/' out/index.html; then
+            echo "::error::out/index.html has no /ZealousSolutions/_next/ URLs. Is next.config.mjs still reading NEXT_PUBLIC_BASE_PATH?"
+            exit 1
+          fi
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

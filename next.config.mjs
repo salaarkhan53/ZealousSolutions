@@ -13,7 +13,9 @@ const nextConfig = {
 
   // Empty for the real site, which sits at the domain root. The GitHub Pages
   // preview is served from /ZealousSolutions/ and sets this at build time.
- basePath: '',
+  // Keep this reading the env var: hard-coding '' breaks the Pages preview
+  // (every script and stylesheet 404s) while changing nothing locally.
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
 };
 
 export default nextConfig;
