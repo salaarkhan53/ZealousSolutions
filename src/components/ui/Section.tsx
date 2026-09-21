@@ -19,7 +19,7 @@ export function Section({
     >
       {/* Padding sits inside the max-width, matching the header and footer, so
           every region on the page shares one left edge. */}
-      <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">{children}</div>
+      <div className="shell">{children}</div>
     </section>
   );
 }

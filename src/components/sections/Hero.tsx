@@ -43,7 +43,7 @@ export function StageOverlays({ progress }: { progress: ScrollProgress }) {
         // Portrait keeps the copy in the lower half, clear of the mascot band.
         className="absolute inset-0 flex items-end pb-10 landscape:items-center landscape:pb-0 short:items-start"
       >
-        <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+        <div className="shell">
           {/* Wide enough to keep "Stronger Business" on one line from sm up,
               matching the approved hero composition. */}
           {/* The eyebrow rail that used to sit above this was removed: on
@@ -127,7 +127,7 @@ export function StageOverlays({ progress }: { progress: ScrollProgress }) {
         lift={ABOUT.lift}
         className="absolute inset-0 flex items-end pb-20 landscape:items-center landscape:pb-0 short:items-start short:pb-0"
       >
-        <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+        <div className="shell">
           <div className="max-w-xl landscape:pt-20 short:pt-[5.5rem]">
             <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
               <span aria-hidden="true" className="tabular-nums opacity-60">
@@ -172,7 +172,7 @@ export function StageOverlays({ progress }: { progress: ScrollProgress }) {
         lift={SERVICES.lift}
         className="absolute inset-0 flex items-end pb-20 landscape:items-center landscape:pb-0 short:items-start short:pb-0"
       >
-        <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+        <div className="shell">
           <div className="max-w-lg landscape:pt-20 short:pt-[5.5rem]">
             <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
               <span aria-hidden="true" className="tabular-nums opacity-60">
@@ -196,7 +196,10 @@ export function StageOverlays({ progress }: { progress: ScrollProgress }) {
                 Services section below - which is what earns the hover state. */}
             {/* One per row on phones: at 14px the icon and label together
                   overflow a half-width chip and wrap to two ragged lines. */}
-            <ul className="pointer-events-auto mt-8 grid max-w-md grid-cols-1 gap-2.5 sm:grid-cols-2">
+            <ul
+              data-fab-avoid
+              className="pointer-events-auto mt-8 grid max-w-md grid-cols-1 gap-2.5 sm:grid-cols-2"
+            >
               {services.map((service) => (
                 <li key={service.id}>
                   <a

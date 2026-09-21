@@ -69,7 +69,7 @@ export function Header() {
           : 'border-b border-transparent',
       )}
     >
-      <div className="mx-auto flex h-20 w-full max-w-6xl items-center justify-between gap-6 px-5 sm:px-8">
+      <div className="shell flex h-20 items-center justify-between gap-6">
         <Link prefetch={false} href="/" className="shrink-0" aria-label="Zealous Solutions - home">
           <Logo />
         </Link>

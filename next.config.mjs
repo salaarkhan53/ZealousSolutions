@@ -13,7 +13,7 @@ const nextConfig = {
 
   // Empty for the real site, which sits at the domain root. The GitHub Pages
   // preview is served from /ZealousSolutions/ and sets this at build time.
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+ basePath: '',
 };
 
 export default nextConfig;

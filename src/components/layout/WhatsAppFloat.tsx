@@ -1,23 +1,30 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { contact } from '@/content/site';
 import { cn } from '@/lib/cn';
 
-/** Below this width the forms run edge to edge, under the button. */
-const NARROW = '(max-width: 1023px)';
+/**
+ * What the button must never sit on: forms, the footer, gold call-to-action
+ * buttons (full width on phones, e.g. each role's Apply now), and anything
+ * marked data-fab-avoid.
+ */
+const AVOID = 'form, footer, .btn-gold, [data-fab-avoid]';
 
-/** The strip the button occupies: its size plus the bottom/right offset. */
-const ZONE = 96;
+/** Breathing room kept around the button when checking what is under it. */
+const MARGIN = 8;
 
 /**
  * Global WhatsApp entry point. Fixed bottom-right above everything except the
  * mobile menu, which covers the full viewport at a higher z-index.
  *
- * On phones and tablets the forms span the full width, so the button would sit
- * over their inputs and Submit button, and a tap meant for a field opened
- * WhatsApp instead. It steps aside while a form is actually underneath it.
+ * It steps aside whenever a form, the footer or a call to action is actually
+ * underneath it (see AVOID). On
+ * phones the forms run edge to edge, so a tap meant for a field would open
+ * WhatsApp instead; on wide screens the page gutter is narrower than the
+ * button, so it sat on the footer's links. The footer lists the WhatsApp
+ * number itself, so nothing is lost while it is hidden.
  *
  * Measured on scroll rather than with an IntersectionObserver: forms come and
  * go (client-side navigation, a form swapped for its success panel), and a
@@ -25,22 +32,39 @@ const ZONE = 96;
  */
 export function WhatsAppFloat() {
   const pathname = usePathname();
-  const [overForm, setOverForm] = useState(false);
+  const ref = useRef<HTMLAnchorElement>(null);
+  const [covering, setCovering] = useState(false);
 
   useEffect(() => {
-    const narrow = window.matchMedia(NARROW);
+    const button = ref.current;
+    if (!button) return;
     let frame = 0;
 
     const measure = () => {
       frame = 0;
-      if (!narrow.matches) return setOverForm(false);
-      const top = window.innerHeight - ZONE;
-      const left = window.innerWidth - ZONE;
-      const covered = Array.from(document.querySelectorAll('form')).some((form) => {
-        const r = form.getBoundingClientRect();
-        return r.bottom > top && r.top < window.innerHeight && r.right > left;
+      // The resting position, from the button's size and its bottom/right
+      // offsets: its live rect shifts while the hide transition runs.
+      const style = getComputedStyle(button);
+      const size = button.offsetWidth;
+      const right = window.innerWidth - parseFloat(style.right);
+      const bottom = window.innerHeight - parseFloat(style.bottom);
+      const zone = {
+        left: right - size - MARGIN,
+        right: right + MARGIN,
+        top: bottom - size - MARGIN,
+        bottom: bottom + MARGIN,
+      };
+
+      const underneath = Array.from(document.querySelectorAll(AVOID)).some((el) => {
+        // Skip what isn't showing: the hero's copy panels fade out with scroll
+        // and set visibility: hidden, but keep their layout box. Opacity is
+        // deliberately not checked: sections fade in (Reveal) after the scroll
+        // that brings them on screen, and a form caught mid-fade must count.
+        if (!el.checkVisibility({ visibilityProperty: true })) return false;
+        const r = el.getBoundingClientRect();
+        return r.left < zone.right && r.right > zone.left && r.top < zone.bottom && r.bottom > zone.top;
       });
-      setOverForm(covered);
+      setCovering(underneath);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(measure);
@@ -49,26 +73,25 @@ export function WhatsAppFloat() {
     measure();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
-    narrow.addEventListener('change', schedule);
     return () => {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
-      narrow.removeEventListener('change', schedule);
       if (frame) cancelAnimationFrame(frame);
     };
   }, [pathname]);
 
   return (
     <a
+      ref={ref}
       href={`https://wa.me/${contact.whatsapp}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`Chat with us on WhatsApp at ${contact.whatsappDisplay}`}
-      aria-hidden={overForm || undefined}
-      tabIndex={overForm ? -1 : undefined}
+      aria-hidden={covering || undefined}
+      tabIndex={covering ? -1 : undefined}
       className={cn(
         'group fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full border border-gold/40 bg-surface/90 backdrop-blur-md transition-all duration-300 hover:border-gold hover:shadow-[0_0_30px_-4px] hover:shadow-gold/50 sm:bottom-7 sm:right-7',
-        overForm && 'pointer-events-none translate-y-4 opacity-0',
+        covering && 'pointer-events-none translate-y-4 opacity-0',
       )}
     >
       {/* Pulse ring. Decorative, and stilled under reduced motion by the

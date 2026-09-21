@@ -130,6 +130,21 @@
   }
 }
 
+/* The one page container. Every region (header, hero panels, sections,
+   footer) uses it, so they all share a left edge at every width.
+
+   It used to be a fixed 72rem (1152px) column, which on a large laptop left
+   the copy stranded in the middle while the mascot filled the right. Now the
+   column widens up to 110rem and the side gutter scales with the viewport:
+   20px on a phone, about 72px at 1440, 96px from 1920 up. Line lengths stay
+   readable because text blocks carry their own max-widths inside it. */
+@utility shell {
+  width: 100%;
+  max-width: 110rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 6rem);
+}
+
 /* The brand CTA. Defined once: it was previously hand-copied into four
    components, which meant a style change needed four edits and they drifted. */
 @utility btn-gold {

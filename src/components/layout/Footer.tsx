@@ -52,7 +52,7 @@ export function Footer() {
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8">
+      <div className="relative shell">
         <div className="grid gap-6 py-8 lg:grid-cols-[auto_1fr] lg:gap-14 lg:py-9">
           {/* Identity and status */}
           <div className="flex flex-col gap-4">

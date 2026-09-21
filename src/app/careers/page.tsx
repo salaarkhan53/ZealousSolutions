@@ -105,7 +105,7 @@ export default function CareersPage() {
           className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-night to-transparent"
         />
 
-        <div className="relative mx-auto flex w-full max-w-6xl flex-col justify-end px-5 pb-6 pt-16 sm:px-8 landscape:justify-center landscape:py-16">
+        <div className="shell relative flex flex-col justify-end pb-6 pt-16 landscape:justify-center landscape:py-16">
           <div className="max-w-xl">
             <p className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.28em] text-gold">
               <span aria-hidden="true" className="h-px w-10 bg-gold/60" />

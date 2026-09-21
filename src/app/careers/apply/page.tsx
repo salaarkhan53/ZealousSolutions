@@ -13,7 +13,10 @@ export const metadata = pageMeta({
 
 export default function ApplyPage() {
   return (
-    <Section className="pt-32">
+    // Important: Section's own md:py-[4.5rem] comes later in the stylesheet and
+    // otherwise wins from md up, which left "Back to careers" pressed against
+    // the fixed header.
+    <Section className="pt-32!">
       <Link
         href="/careers/"
         prefetch={false}

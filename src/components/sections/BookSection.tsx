@@ -27,7 +27,15 @@ export function BookSection() {
             {booking.eyebrow}
           </p>
 
-          <h2 className="mt-5 text-3xl leading-[1.15] sm:text-4xl">{booking.heading}</h2>
+          {/* One sentence per line: left to wrap freely, the second sentence's
+              first word ("We") was stranded at the end of line one. */}
+          <h2 className="mt-5 text-3xl leading-[1.15] sm:text-4xl">
+            {booking.heading.split(/(?<=\.)\s+/).map((sentence) => (
+              <span key={sentence} className="block">
+                {sentence}
+              </span>
+            ))}
+          </h2>
           <p className="body-copy mt-5 text-base leading-relaxed text-muted">{booking.body}</p>
 
           <ul className="mt-9 space-y-5 border-t border-white/5 pt-8 text-sm">
