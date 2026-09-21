@@ -6,6 +6,12 @@ ErrorDocument 404 /404.html
 # No directory listings: folders such as /seq/ have no index page.
 Options -Indexes
 
+# The GitHub Actions FTP deploy keeps its sync record here. It lists every file
+# on the server with a hash; nobody browsing the site needs it.
+<Files ".ftp-deploy-sync-state.json">
+  Require all denied
+</Files>
+
 # trailingSlash:true means every route is a directory with an index.html,
 # so Apache's default DirectoryIndex handles routing without rewrites.
 DirectoryIndex index.html
