@@ -64,6 +64,10 @@ export function SprinkleField() {
       {FIELD.map((s, i) => (
         <span
           key={i}
+          // Read by StickyEmblem, which fades out any sprinkle whose drift path
+          // would cross the home page's background logo.
+          data-sprinkle=""
+          data-sway={s.sway}
           className="absolute rounded-full bg-gold animate-[sprinkleFloat_var(--s-dur)_linear_var(--s-delay)_infinite]"
           style={
             {

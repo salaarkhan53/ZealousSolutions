@@ -7,6 +7,7 @@ import { Process } from '@/components/sections/Process';
 import { Services } from '@/components/sections/Services';
 import { WhyUs } from '@/components/sections/WhyUs';
 import { MascotStage } from '@/components/sequence/MascotStage';
+import { StickyEmblem } from '@/components/layout/StickyEmblem';
 import { SectionDivider } from '@/components/ui/SectionDivider';
 
 export default function HomePage() {
@@ -16,13 +17,18 @@ export default function HomePage() {
           mascot, choreographed to its poses. */}
       <MascotStage>{(progress) => <StageOverlays progress={progress} />}</MascotStage>
 
-      <Services />
-      <SectionDivider />
-      <Industries />
-      <WhyUs />
-      <SectionDivider />
-      <Process />
-      <BookSection />
+      {/* Everything after the stage shares one layer for the background logo,
+          so it can stay pinned while these sections scroll past. */}
+      <div className="relative">
+        <StickyEmblem />
+        <Services />
+        <SectionDivider />
+        <Industries />
+        <WhyUs />
+        <SectionDivider />
+        <Process />
+        <BookSection />
+      </div>
     </>
   );
 }

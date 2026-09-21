@@ -292,6 +292,71 @@
 
 /* Gold dust: a slow rise with a lateral drift, fading in and out at the ends
    so particles never visibly pop into or out of existence. */
+/* Sprinkles give the home page's background logo a wide berth. StickyEmblem
+   flags the ones whose drift would cross it; they fade out rather than blink.
+   `filter` is used because the float animation already owns `opacity`. */
+[data-sprinkle] {
+  transition: filter 0.8s ease;
+}
+
+[data-sprinkle][data-near-emblem] {
+  filter: opacity(0);
+}
+
+/* The background logo (StickyEmblem). A sheen of light crosses the mark every
+   few seconds, clipped to the logo's own shape by using its alpha channel as a
+   mask, over a fixed specular highlight that gives it a glossy, lit-from-above
+   look. Screen blending lets it brighten the faint mark beneath without
+   greying out the dark page around it. */
+@utility emblem-gloss {
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background-image:
+    linear-gradient(115deg, transparent 44%, rgba(255, 241, 200, 0.95) 50%, transparent 56%),
+    radial-gradient(circle at 30% 24%, rgba(255, 236, 170, 0.6), transparent 42%);
+  background-size: 300% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  animation: emblemSheen 8s var(--ease-out-expo) infinite;
+}
+
+/* The band starts off the left edge and ends off the right, then rests for the
+   remaining time so the sweep reads as an occasional glint, not a strobe. */
+@keyframes emblemSheen {
+  0% {
+    background-position: 90% 0, 0 0;
+  }
+  40%,
+  100% {
+    background-position: 10% 0, 0 0;
+  }
+}
+
+/* Same unhurried drift as the sprinkles, so the logo belongs to the field. */
+@keyframes emblemFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+@keyframes emblemHalo {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @keyframes sprinkleFloat {
   0% {
     transform: translate3d(0, 12px, 0);

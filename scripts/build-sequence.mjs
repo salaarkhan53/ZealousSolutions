@@ -140,6 +140,18 @@ async function buildBrand() {
     console.log(`  ${name}: ${kb(size)}`);
   }
 
+  // Background emblem on the home page (StickyEmblem). Shown up to ~480 CSS px,
+  // so 720px covers 1.5x screens; it sits at low opacity, where the extra
+  // sharpness of a 2x asset would not be visible. WebP keeps the alpha
+  // channel, which the gloss layer also uses as its mask.
+  {
+    const { size } = await sharp(symbol)
+      .resize({ width: 720 })
+      .webp({ quality: 82, alphaQuality: 90, effort: 6 })
+      .toFile(path.join(PUBLIC, 'emblem.webp'));
+    console.log(`  emblem.webp: ${kb(size)}`);
+  }
+
   // Favicon: sharp has no .ico encoder, so ship a 32px PNG — every current
   // browser accepts it, and the metadata in layout.tsx points at this file.
   await sharp(symbol).resize({ width: 32 }).png().toFile(path.join(PUBLIC, 'icon.png'));
