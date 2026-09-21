@@ -1,3 +1,5 @@
+import { asset, IS_PREVIEW } from '@/lib/asset';
+
 /**
  * The single submission path for both forms.
  *
@@ -13,7 +15,15 @@
  * noticing at either end.
  */
 
-const ENDPOINT = '/send.php';
+const ENDPOINT = asset('/send.php');
+
+/**
+ * Shown on the GitHub Pages preview, which is static hosting with no PHP. Said
+ * plainly rather than faking a success, so nobody reviewing the preview thinks
+ * a real enquiry went through.
+ */
+const PREVIEW_NOTICE =
+  'This is a preview of the website, so forms are switched off here. They will send once the site is live at zealoussolutions.us.';
 
 export type SubmitResult =
   | { ok: true; reference: string }
@@ -35,6 +45,8 @@ export async function submitForm(data: FormData): Promise<SubmitResult> {
     );
     return { ok: true, reference: 'DEV-PREVIEW' };
   }
+
+  if (IS_PREVIEW) return { ok: false, error: PREVIEW_NOTICE };
 
   try {
     const response = await fetch(ENDPOINT, { method: 'POST', body: data });

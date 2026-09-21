@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Reveal } from '@/components/ui/Reveal';
 import { Section } from '@/components/ui/Section';
 import { careers, company, contact } from '@/content/site';
+import { asset } from '@/lib/asset';
 
 export const metadata = pageMeta({
   title: 'Careers',
@@ -61,8 +62,8 @@ export default function CareersPage() {
         {/* Purpose-shot mascot for this page: the same composition as the
             homepage frames, with copy sitting in the left-hand negative space. */}
         <img
-          src="/careers-hero.webp"
-          srcSet="/careers-hero-sm.webp 800w, /careers-hero.webp 1600w"
+          src={asset('/careers-hero.webp')}
+          srcSet={`${asset('/careers-hero-sm.webp')} 800w, ${asset('/careers-hero.webp')} 1600w`}
           sizes="100vw"
           alt=""
           aria-hidden="true"

@@ -1,0 +1,58 @@
+# Publishes a preview of the site to GitHub Pages on every push to main:
+# https://salaarkhan53.github.io/ZealousSolutions/
+#
+# This is a preview for review only. The real site is built with
+# `npm run build` and uploaded to cPanel, where send.php handles the forms.
+# GitHub Pages cannot run PHP, so the preview build (NEXT_PUBLIC_PREVIEW)
+# shows a notice on submit instead of sending, and is marked noindex.
+
+name: Deploy preview to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a newer push supersedes one still queued.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build static export
+        run: npm run build
+        env:
+          # Pages serves this repository from /ZealousSolutions/.
+          NEXT_PUBLIC_BASE_PATH: /ZealousSolutions
+          NEXT_PUBLIC_PREVIEW: 'true'
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

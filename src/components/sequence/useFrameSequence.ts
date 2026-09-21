@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { asset } from '@/lib/asset';
 
 /** Must match TARGET_FRAMES in scripts/build-sequence.mjs. */
 export const FRAME_COUNT = 160;
@@ -25,7 +26,7 @@ export type FrameSequence = {
 };
 
 const frameSrc = (ladder: Ladder, index: number) =>
-  `/seq/${ladder}/${String(index + 1).padStart(4, '0')}.webp`;
+  asset(`/seq/${ladder}/${String(index + 1).padStart(4, '0')}.webp`);
 
 /**
  * `createImageBitmap` gives the compositor a ready-to-draw surface, which keeps

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { company, contact, nav, socials } from '@/content/site';
 import { LocalTime } from './LocalTime';
 import { SocialIcon } from './SocialIcon';
+import { asset } from '@/lib/asset';
 
 /**
  * The footer is built as an operations readout rather than a sitemap: a
@@ -56,7 +57,7 @@ export function Footer() {
           {/* Identity and status */}
           <div className="flex flex-col gap-4">
             <span className="flex items-center gap-3">
-              <img src="/symbol.png" alt="" aria-hidden="true" width={36} height={36} loading="lazy" decoding="async" className="h-9 w-9" />
+              <img src={asset('/symbol.png')} alt="" aria-hidden="true" width={36} height={36} loading="lazy" decoding="async" className="h-9 w-9" />
               <span className="flex flex-col leading-none">
                 <span className="gold-text font-display text-[14px] font-extrabold tracking-[0.16em]">
                   ZEALOUS

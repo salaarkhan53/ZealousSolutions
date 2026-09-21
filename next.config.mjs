@@ -10,6 +10,10 @@ const nextConfig = {
   // Apache serves directories, not extensionless paths: this makes /careers/
   // resolve to careers/index.html rather than 404.
   trailingSlash: true,
+
+  // Empty for the real site, which sits at the domain root. The GitHub Pages
+  // preview is served from /ZealousSolutions/ and sets this at build time.
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
 };
 
 export default nextConfig;

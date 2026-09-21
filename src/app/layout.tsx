@@ -6,6 +6,7 @@ import { SmoothScroll } from '@/components/layout/SmoothScroll';
 import { SprinkleField } from '@/components/layout/SprinkleField';
 import { WhatsAppFloat } from '@/components/layout/WhatsAppFloat';
 import { company, contact } from '@/content/site';
+import { asset, IS_PREVIEW } from '@/lib/asset';
 import './globals.css';
 
 const sora = Sora({
@@ -46,12 +47,15 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
-      { url: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
+      { url: asset('/icon.png'), type: 'image/png', sizes: '32x32' },
+      { url: asset('/favicon-32.png'), type: 'image/png', sizes: '32x32' },
     ],
-    apple: '/apple-touch-icon.png',
+    apple: asset('/apple-touch-icon.png'),
   },
-  manifest: '/site.webmanifest',
+  manifest: asset('/site.webmanifest'),
+  // The GitHub Pages preview must not be indexed: it would compete with the
+  // real domain as duplicate content.
+  ...(IS_PREVIEW && { robots: { index: false, follow: false } }),
 };
 
 /** Helps Google associate the brand with the real Sheridan address. */

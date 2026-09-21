@@ -37,6 +37,25 @@ Visit `/careers/`, `/privacy/` and a nonsense URL to confirm deep links and the
 
 ---
 
+## Preview on GitHub Pages
+
+Every push to `main` publishes a review copy to
+**https://salaarkhan53.github.io/ZealousSolutions/**
+([`.github/workflows/pages.yml`](.github/workflows/pages.yml)).
+
+It is for showing the design, not for going live:
+
+- **Forms don't send there.** GitHub Pages can't run PHP, so submitting shows a
+  notice that forms work once the site is live.
+- **Search engines are told not to index it**, so it won't compete with the
+  real domain.
+- **It is built with a `/ZealousSolutions` base path** (`NEXT_PUBLIC_BASE_PATH`).
+  Plain `npm run build` leaves that empty, so the cPanel build is unaffected.
+  Any new image or file path written as a string (not a Next `<Link>`) should
+  go through `asset()` in [`src/lib/asset.ts`](src/lib/asset.ts).
+
+---
+
 ## The two forms
 
 Both forms post to one PHP script, [`public/send.php`](public/send.php), which

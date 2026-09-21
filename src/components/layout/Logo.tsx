@@ -1,4 +1,5 @@
 import { cn } from '@/lib/cn';
+import { asset } from '@/lib/asset';
 
 /**
  * The supplied logo is a stacked lockup - symbol above the wordmark - which
@@ -9,7 +10,7 @@ export function Logo({ className }: { className?: string }) {
   return (
     <span className={cn('flex items-center gap-3', className)}>
       <img
-        src="/symbol.png"
+        src={asset('/symbol.png')}
         alt=""
         aria-hidden="true"
         width={40}

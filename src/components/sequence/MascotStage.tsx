@@ -3,6 +3,7 @@
 import { useScrollProgress, type ScrollProgress } from '@/lib/scrollProgress';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { FRAME_COUNT, useFrameSequence } from './useFrameSequence';
+import { asset } from '@/lib/asset';
 
 type Props = {
   /**
@@ -163,7 +164,7 @@ export function MascotStage({ children }: Props) {
         {/* object-position mirrors the canvas focal logic so the poster and the
             first drawn frame line up rather than jumping. */}
         <img
-          src="/seq/poster.webp"
+          src={asset('/seq/poster.webp')}
           alt=""
           aria-hidden="true"
           width={1152}

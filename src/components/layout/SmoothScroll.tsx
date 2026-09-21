@@ -39,10 +39,9 @@ export function SmoothScroll() {
       const hash = href.slice(href.indexOf('#'));
       if (hash.length < 2) return;
 
-      // Only intercept links that resolve on the current page.
-      const path = href.split('#')[0];
-      if (path && path !== '/' && path !== window.location.pathname) return;
-      if (path === '/' && window.location.pathname !== '/') return;
+      // Only intercept links that resolve on the current page. Resolved as a
+      // URL so a base path (the GitHub Pages preview) compares correctly.
+      if (new URL(href, window.location.href).pathname !== window.location.pathname) return;
 
       const target = document.querySelector(hash);
       if (!target) return;
